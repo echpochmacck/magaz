@@ -71,7 +71,9 @@ class SiteController extends Controller
                 Yii::$app->session->set('carzina', []);
             }
             $carzina = Yii::$app->session->get('carzina');
-        
+
+
+            
             if ($product_id = Yii::$app->request->get('product_id')) {
                 if (array_key_exists($product_id, $carzina)) {
                     $carzina[$product_id]['quantity'] += 1;
@@ -80,6 +82,7 @@ class SiteController extends Controller
                     $carzina[$product_id]['quantity'] = 1;
                     $carzina[$product_id]['price'] = Products::findOne($product_id)->price;
                     $carzina[$product_id]['title'] = Products::findOne($product_id)->title;
+                    $carzina[$product_id]['id'] = Products::findOne($product_id)->id;
                 }
                 Yii::$app->session->set('carzina', $carzina);
             }

@@ -23,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'id'=>'product-list',
         'pager' => [
            'class' =>  yii\bootstrap5\LinkPager::class
         ],
@@ -45,10 +46,11 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Добавить в корзину',
                 'format' => 'html', 
-                'value' => fn ($model) => Html::a('добавить', ['', 'product_id' => $model->id], ['class' => 'btn btn-primary','name' => 'product'])
+                'value' => fn ($model) => Html::a('добавить', ['', 'product_id' => $model->id], ['class' => 'btn btn-primary product-order'])
             ]
         ],
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
 <?=Html::a('Заказать', '/orders/make-order', ['class'=>'btn btn-primary'])?>
+<?php $this->registerJsFile('script/add-product.js', ['depends'=>'yii\bootstrap5\BootstrapAsset'])?>

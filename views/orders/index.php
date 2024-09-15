@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
@@ -18,9 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php Pjax::begin(); ?>
 
-    
+
     <?= GridView::widget([
-        'filterModel' => $searchModel,  
+        'filterModel' => $searchModel,
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -29,7 +30,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'status',
             'order_date',
             'sum',
-           
+            [
+                'label' => '',
+                'format' => 'html',
+                'value' => fn($model) =>  Html::a('Посмотреть информацию', ['orders/view', 'id' => $model->id], ['class' => 'btn btn-primary'])
+            ]
+
         ],
     ]); ?>
 

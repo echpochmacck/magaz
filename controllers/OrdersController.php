@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Orders;
 use app\models\OrdersSearch;
+use app\models\Products;
 use app\models\Sostav;
 use app\models\User;
 use Yii;
@@ -138,17 +139,42 @@ class OrdersController extends Controller
     public function actionMakeOrder()
     {
         if (!Yii::$app->user->isGuest) {
-            $carzina = Yii::$app->session->get('carzina');
+            $carzina = Yii::$app->session->get('carzina');;
+            if ($carzina && !empty($carzina)) {
+                $sum = Orders::checkSum(yii::$app->session->get('carzina'));
+            } else {
+                $sum = '';
+            }
+
+
+            if ($product_id = Yii::$app->request->get('product_id')) {
+                if (array_key_exists($product_id, $carzina) && !Yii::$app->request->get('delete')) {
+                    $carzina[$product_id]['quantity'] += 1;
+                } else {
+                    if (array_key_exists($product_id, $carzina)) {
+                        $carzina[$product_id]['quantity'] -= 1;
+                    }
+                    $carzina = Orders::checkEmptyCarzina($carzina);
+                }
+                Yii::$app->session->set('carzina', $carzina);
+                $sum = Orders::checkSum(yii::$app->session->get('carzina'));
+            }
+
             $dataProvider = new ArrayDataProvider([
-                'models' => $carzina
+                'models' => $carzina,
+                'pagination' => false,
             ]);
             return $this->render('make-order', [
-                'dataProvider' => $dataProvider
+                'dataProvider' => $dataProvider,
+                'sum' => $sum
+
             ]);
         } else {
             return $this->goHome();
         }
     }
+
+
 
     public function actionSaveOrder()
     {
@@ -158,6 +184,8 @@ class OrdersController extends Controller
                 $order = new Orders();
                 $order->user_id = Yii::$app->user->identity->id;
                 $order->status = 'в ожидании';
+                $order->sum = Orders::checkSum($carzina);
+                // var_dump($order);die;
                 $order->save();
 
                 foreach ($carzina as $key => $value) {
@@ -175,5 +203,14 @@ class OrdersController extends Controller
             }
         }
         return $this->goHome();
+    }
+
+
+    public function actionDeleteCorzina()
+    {
+        if (Yii::$app->session->has('carzina')) {
+            Yii::$app->session->set('carzina', []);
+        }
+        return $this->goBack();
     }
 }

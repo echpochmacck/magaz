@@ -19,7 +19,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php Pjax::begin(); ?>
 
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -33,24 +32,34 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Название',
                 'value' => 'title',
+            ],
+            [
+                'label' => 'Добавить в корзину',
+                'format' => 'html',
+                'value' => fn($model) => Html::a('добавить', ['', 'product_id' => $model['id']], ['class' => 'btn btn-primary product-order '])
+            ],
+            [
+                'label' => 'Удалить из корзины',
+                'format' => 'html',
+                'value' => fn($model) => Html::a('Удалить', ['', 'product_id' => $model['id'], 'delete' => 1], ['class' => 'btn btn-danger product-order delete-order'])
             ]
 
         ],
     ]); ?>
 
-    <?php Pjax::end(); ?>
 
 </div>
 
-<div><?php if (!empty(yii::$app->session->get('carzina'))): ?>
-        Сумма заказа:
-        <div class="sum"><?= Orders::checkSum(yii::$app->session->get('carzina')) ?></div>
+<?php Pjax::end(); ?>
+Сумма заказа:
+<div class="sum"><?= $sum ?></div>
+<div><?php if ((!empty(yii::$app->session->get('carzina')))): ?>
         <?php if (Orders::checkSum(yii::$app->session->get('carzina')) <= Yii::$app->user->identity->cash): ?>
-        <?=Html::a('заказать', '/orders/save-order', ['class' => 'btn btn-success'])?>
+            <?= Html::a('заказать', '/orders/save-order', ['class' => 'btn btn-success']) ?>
+
         <?php else: ?>
             Не хватает денег
-    <?php endif ?>
-    <?php else: ?>
-        карзина пуста
+        <?php endif ?>
+        <?= Html::a('Очистить корзину', '/orders/delete-corzina', ['class' => 'btn btn-danger']) ?>
     <?php endif ?>
 </div>

@@ -11,13 +11,15 @@ use Yii;
  * @property int $user_id
  * @property string $status
  * @property string $order_date
+ * @property float $sum
+ * 
  *
  * @property Sostav[] $sostavs
  * @property User $user
  */
 class Orders extends \yii\db\ActiveRecord
 {
-    public $sum;
+    // public $sum;
     /**
      * {@inheritdoc}
      */
@@ -34,6 +36,7 @@ class Orders extends \yii\db\ActiveRecord
         return [
             [['user_id', 'status'], 'required'],
             [['user_id'], 'integer'],
+            ['sum', 'required'],
             [['order_date'], 'safe'],
             [['status'], 'string', 'max' => 255],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
@@ -81,5 +84,16 @@ class Orders extends \yii\db\ActiveRecord
             $sum += $value['price'] * $value['quantity'];
         }
         return $sum;
+    }
+
+    public static function checkEmptyCarzina(array $array)
+    {
+        $copy = $array;
+        foreach ($array as $key => $ar) {
+            if ($ar['quantity'] < 1) {
+                unset($copy[$key]);
+            }
+        }
+        return $copy;
     }
 }

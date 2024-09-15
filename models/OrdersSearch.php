@@ -47,7 +47,7 @@ class OrdersSearch extends Orders
                 'orders.id',
                 'status',
                 'order_date',
-                'sum(products.`price` * sostav.quantity) as sum'
+                'sum'
             ])
             ->innerJoin('sostav', 'orders.id= sostav.order_id')
             ->innerJoin('products', 'products.id=sostav.product_id')
@@ -55,28 +55,27 @@ class OrdersSearch extends Orders
             ->where(['user_id' => $user_id]);
 
         // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
+                'defaultOrder' => [
+                    'order_date' => SORT_DESC,
+                ],
                 'attributes' => [
                     'status',
-                    'order_date',
                     'id',
+                    'order_date',
                     'sum' => [
-                        'desc' => [
-                            'sum' => SORT_DESC,
-                        ],
-                        'asc' => [
-                            'sum' => SORT_ASC,
-                        ],
-
-                    ]
-                ]
-            ]
+                        'asc' => ['sum' => SORT_ASC],
+                        'desc' => ['sum' => SORT_DESC],
+                        'label' => 'Sum', 
+                    ],
+                ],
+            ],
         ]);
 
         $this->load($params);
+
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -94,11 +93,11 @@ class OrdersSearch extends Orders
 
         $query->andFilterWhere(['like', 'status', $this->status]);
 
-        $query->andFilterHaving(['like', 'sum', $this->sum]);
+        $query->andFilterWhere(['like', 'sum', $this->sum]);
+        $query->andFilterWhere(['like', 'order_date', $this->order_date]);
+
 
 
         return $dataProvider;
     }
-
-   
 }
