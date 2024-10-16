@@ -17,6 +17,8 @@ use Yii;
  */
 class Sostav extends \yii\db\ActiveRecord
 {
+
+    public string $product_title;
     /**
      * {@inheritdoc}
      */

@@ -96,4 +96,14 @@ class Orders extends \yii\db\ActiveRecord
         }
         return $copy;
     }
+
+
+    public static function queryGoods($id)
+    {
+        return Sostav::find()
+            ->select(['sostav.*', 'products.title as product_title'])
+            ->innerJoin('products', 'sostav.product_id = products.id')
+            ->where(['order_id' => $id])
+        ;
+    }
 }

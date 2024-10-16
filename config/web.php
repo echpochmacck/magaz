@@ -54,6 +54,12 @@ $config = [
         ],
         
     ],
+    'modules' => [
+        'admin' => [
+            'class' => 'app\modules\admin\Module',
+            'defaultRoute' =>'orders'
+        ],
+    ],
     'params' => $params,
 ];
 

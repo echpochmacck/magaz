@@ -140,4 +140,10 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         $this->setAuth();
         return $this->save(false);
     }
+
+
+    public function getIsAdmin()
+    {
+        return $this->role_id === Role::getRoleId('admin');
+    }
 }
